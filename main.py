@@ -1,6 +1,9 @@
 from pursuit import MP, OMP, StOMP, CoSaMP
+from learning import ksvd
 import numpy as np
+import pandas as pd
 import time
+
 
 # Signal & Dictionary
 D_EVAL = np.array(
@@ -68,3 +71,19 @@ print(f"MP: {alpha}")
 end_time = time.time()
 execution_time = end_time - start_time
 print("Execution time for StOMP:", execution_time, "seconds")
+
+
+# Dictionary learning
+
+# K-SVD
+X = pd.read_excel("data.xlsx", "data_train", nrows=100)
+
+KSVD = ksvd.KSVD()
+# hyperparameters
+K = 25  # number of atoms
+MAX_ITER = 5000
+EPS = 1e-2
+solver = OMP()
+
+D = KSVD.fit(X, K, solver, EPS, MAX_ITER)
+print("Learned dictionary: ", D)
