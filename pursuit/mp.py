@@ -1,6 +1,8 @@
 from copy import deepcopy
 import numpy as np
 
+# Matching Pursuit
+
 
 class MP:
     def fit(self, X, D, MAX_ITER, EPS):

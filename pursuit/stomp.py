@@ -1,6 +1,8 @@
 from copy import deepcopy
 import numpy as np
 
+# Stagewise Orthogonal Matching Pursuit
+
 
 class StOMP:
     def fit(self, X, D, MAX_ITER, EPS, t):

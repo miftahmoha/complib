@@ -1,6 +1,8 @@
 from copy import deepcopy
 import numpy as np
 
+# Orthogonal Matching Pursuit
+
 
 class OMP:
     def fit(self, X, D, MAX_ITER, EPS):

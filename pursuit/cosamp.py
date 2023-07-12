@@ -10,6 +10,9 @@ def select_highest_k_indices(lst, k):
     return highest_k_indices
 
 
+#  Compressive Sampling Matched Pursuit
+
+
 class CoSaMP:
     def fit(self, X, D, MAX_ITER, EPS, s):
         row, col = D.shape
@@ -19,7 +22,6 @@ class CoSaMP:
         k = 0
         Gamma = np.empty((row, 0))
         alpha_dict = {}
-        # dict_select = {}
         saved_atoms = {}
         while (
             k < MAX_ITER
