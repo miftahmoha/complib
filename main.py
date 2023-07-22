@@ -1,5 +1,5 @@
-from pursuit import MP, OMP, StOMP, CoSaMP
-from learning import ksvd
+from pursuit import MP, OMP, StOMP, CoSaMP, BP, BPS
+from learning import KSVD
 import numpy as np
 import pandas as pd
 import time
@@ -16,6 +16,7 @@ D_EVAL = np.array(
 )
 X_EVAL = np.array([4 / 3 - np.sqrt(2) / 2, 4 / 3 + np.sqrt(2) / 2, 2 / 3], float)
 
+"""
 # MP
 
 MAX_ITER = 5000
@@ -87,3 +88,25 @@ solver = OMP()
 
 D = KSVD.fit(X, K, solver, EPS, MAX_ITER)
 print("Learned dictionary: ", D)
+
+
+# BP
+
+MAX_ITER = 5000
+EPS = 1e-2
+start_time = time.time()
+bp = BP()
+
+alpha = bp.fit(X_EVAL, D_EVAL)
+
+print(f"MP: {alpha}")
+end_time = time.time()
+execution_time = end_time - start_time
+print("Execution time for MP:", execution_time, "seconds")
+"""
+
+# BPS
+X = pd.read_excel("data.xlsx", "data_train", nrows=100)
+X = X.to_numpy()
+bps = BPS()
+results = bps.fit(X, dictionary="haar", measure_matrix="bernoulli")
