@@ -12,30 +12,45 @@ import os
 import sys
 from copy import deepcopy
 
-# adding the parent directory to the sys.path list to import utils module
+
+# adds the parent directory to the sys.path list to import utils module
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(parent_dir)
 
 
-# checking that input is a numpy array
+# checks that input is a numpy array
 def check_numpy_array(input_data):
     if not isinstance(input_data, np.ndarray):
         raise TypeError("Input must be a NumPy array.")
 
 
-# normalizing measure matrix
-def normalize_columns(matrix):
+# normalizes a matrix
+def normalize(matrix):
     col_norms = np.linalg.norm(matrix, axis=0)
     normalized_matrix = matrix / col_norms
     return normalized_matrix
 
 
-# reading the BPS stan model
-with open("./pursuit/bps/bps.stan", "r") as file:
+# reads the BPS stan model
+with open("./bayes/mtcs.stan", "r") as file:
     bps_stan = file.read()
 
 
 def process_results(results, M, n):
+    """
+    Processes results from the Bayesian model
+
+    :param results: posterior samples from STAN
+    :type results: model class
+    :param M: number of signals
+    :type results: int
+    :param n: orignal dimension of each signal
+    :type n: int
+
+    :return: sample mean for each signal
+    :rtype: dict
+    """
+
     def create_theta_dictionary(M, n):
         theta_dict = {}
         for i in range(1, M + 1):
@@ -52,12 +67,26 @@ def process_results(results, M, n):
     return theta_dict
 
 
-class BPS:
+class MT_CS_full:
+    """
+    Performs multitask compressive sensing with full bayesian computation
+
+    :param X: matrix containing signals as columns
+    :type X: numpy array
+    :param dictionary: dictionary containing atoms
+    :type dictionary: numpy array
+    :param measure_matrix: measure matrix
+    :type measure_matrix: numpy array
+    :param proportion: percentage of each measured signal using
+        the appropriate matrix
+    :type proportion: int
+    """
+
     def fit(self, X, dictionary="dct", measure_matrix="gaussian", proportion=0.5):
         # X must be a numpy array
         check_numpy_array(X)
 
-        # importing utils module
+        # importing matrix_utils module
         try:
             imported_module = importlib.import_module("matrix_utils")
             print(f"Successfully imported utils module.")
@@ -80,20 +109,17 @@ class BPS:
         except NameError:
             print(f"{measure_matrix} not found. Please check the name and try again.")
 
-        # original signals
-        Z = deepcopy(X).T
-        Z_centered = Z - np.mean(Z, axis=1, keepdims=True)
-        Z_norms = np.linalg.norm(Z_centered, axis=1, keepdims=True)
-        Z = Z_centered / Z_norms
+        # normalizes signals
+        Z = normalize(deepcopy(X).T)
 
-        # M: number of signals, n: original dimension of signals
+        # M: number of signals, n: original dimension of each signal
         M, n = Z.shape
 
         # measure dimension
         m = int(n * proportion)
 
         # measure matrix
-        Phi = normalize_columns(generate_measure(m, n))
+        Phi = normalize(generate_measure(m, n))
 
         # measures vectors
         Z_measure = Z @ Phi.T

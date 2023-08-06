@@ -6,8 +6,26 @@ import numpy as np
 
 class StOMP:
     def fit(self, X, D, MAX_ITER, EPS, t):
+        """
+        Stagewise Orthogonal Matching Pursuit algorithm for sparse representation.
+
+        :param X: signal to be represented.
+        :type X: numpy.ndarray
+        :param D: dictionary matrix with atoms as columns
+        :type D: numpy.ndarray
+        :param MAX_ITER: maximum number of iterations
+        :type MAX_ITER: int
+        :param EPS: threshold for convergence.
+        :type EPS: float
+        :param t: ?
+        :type t: float
+
+        :return: sparse representation of the signal using the dictionary
+        :rtype: numpy.ndarray
+        """
+
         row, col = D.shape
-        R = deepcopy(X)
+        R = X.copy()
 
         # initialization
         previous = 0
@@ -23,15 +41,12 @@ class StOMP:
             previous = R
             threshold = t * np.linalg.norm(R) / np.sqrt(col)
             for j in range(col):
-                # C = abs((np.transpose(D[:, j]) @ R))
                 C = abs(np.dot(D[:, j], R))
                 if C > threshold:
                     if j not in alpha_dict.keys():
                         Gamma = np.hstack([Gamma, np.reshape(D[:, j], (row, 1))])
                         alpha_dict[j] = C
-            nid_alpha = (
-                np.linalg.pinv(np.transpose(Gamma) @ Gamma) @ np.transpose(Gamma) @ X
-            )
+            nid_alpha = np.linalg.pinv(Gamma.T @ Gamma) @ Gamma.T @ X
             id_alpha = np.zeros(col)
 
             for i, j in zip(alpha_dict.keys(), range(0, len(nid_alpha))):

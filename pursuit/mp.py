@@ -1,11 +1,27 @@
-from copy import deepcopy
 import numpy as np
+from copy import deepcopy
 
 # Matching Pursuit
 
 
 class MP:
     def fit(self, X, D, MAX_ITER, EPS):
+        """
+        Matching Pursuit algorithm for sparse representation.
+
+        :param X: signal to be represented.
+        :type X: numpy.ndarray
+        :param D: dictionary matrix with atoms as columns
+        :type D: numpy.ndarray
+        :param MAX_ITER: maximum number of iterations
+        :type MAX_ITER: int
+        :param EPS: threshold for convergence.
+        :type EPS: float
+
+        :return: sparse representation of the signal using the dictionary
+        :rtype: numpy.ndarray
+        """
+
         row, col = D.shape
         R = deepcopy(X)
 
@@ -30,6 +46,6 @@ class MP:
             z = np.dot(D[:, l], R) / (np.linalg.norm(D[:, l])) ** 2
             alpha[l] = alpha[l] + z
             # updating R
-            R = R - z * D[:, l]
-            k = k + 1
+            R -= z * D[:, l]
+            k += 1
         return alpha
