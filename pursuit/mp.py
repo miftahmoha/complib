@@ -1,5 +1,4 @@
 import numpy as np
-from copy import deepcopy
 
 # Matching Pursuit
 
@@ -23,7 +22,7 @@ class MP:
         """
 
         row, col = D.shape
-        R = deepcopy(X)
+        R = X.copy()
 
         # initialization
         k = 0
@@ -36,16 +35,13 @@ class MP:
         ):
             previous = R
             # computing the inner product of the signal with all dictionary atoms
-            M = [
-                abs(np.matmul(np.transpose(D[:, j]), R)) / np.linalg.norm(D[:, j])
-                for j in range(0, col)
-            ]
+            M = [abs(D[:, j].T @ R) / np.linalg.norm(D[:, j]) for j in range(0, col)]
             # capturing the index of the atom with the highest projection
             l = np.argmax(M)
             # updating alpha
             z = np.dot(D[:, l], R) / (np.linalg.norm(D[:, l])) ** 2
             alpha[l] = alpha[l] + z
             # updating R
-            R -= z * D[:, l]
+            R = R - z * D[:, l]
             k += 1
         return alpha

@@ -2,7 +2,5 @@
 __pycache__/
 data.xlsx
 bps_notebook.ipynb
-mp_test.py
-omp_tests.py
 /pursuit/jax.py
 main.py

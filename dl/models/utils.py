@@ -25,16 +25,15 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def seed_everything(seed=42):
-    """Seed everything to make the code more reproducable.
+    """
+    Seed everything to make the code more reproducable.
 
     This code is the same as that found from many public Kaggle kernels.
 
-    Parameters
-    ----------
-    seed: int
-        seed value to ues
-
+    :param seed: seed value to ues
+    :type seed: int
     """
+
     random.seed(seed)
     os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
@@ -47,22 +46,20 @@ def display_output(v0, vk, dim1=28, dim2=28, v0_fname=None, vk_fname=None):
     """
     Dsplaying the original and reconstructed images for comparison
 
-    Parameters
-    ----------
-    param:v0: Tensor
-        the original image
-    vk: Tensor
-        the reconstructed image
-    dim1: int
-        number of pixels on first dimension for plotting
-    dim2: int
-        number of pixels on second dimension for plotting
-    v0_fname: str
-        filename to save plot of original image in
-    vk_fname: str
-        filename to save plot of reconstructed image in
-
+    :param v0: the original image
+    :type v0: Tensor
+    :param vk: the reconstructed image
+    :type vk: Tensor
+    :param dim1: number of pixels on first dimension for plotting
+    :type dim1: int
+    :param dim2: number of pixels on second dimension for plotting
+    :type dim2: int
+    :param v0_fname: filename to save plot of original image in
+    :type v0_fname: str
+    :param vk_fname: filename to save plot of reconstructed image in
+    :type vk_fname: str
     """
+
     print("Original (top) and Reconstructed (bottom)")
     img = make_grid(v0.view(v0.shape[0], 1, dim1, dim2).data)
     npimg = np.transpose(img.detach().cpu().numpy(), (1, 2, 0))
@@ -79,17 +76,15 @@ def display_output(v0, vk, dim1=28, dim2=28, v0_fname=None, vk_fname=None):
 
 
 def display_2d_repr(data, labels, fname=None):
-    """Display a 2d representation of the MNIST digits
+    """
+    Display a 2d representation of the MNIST digits
 
-    Parameters
-    ----------
-    data: Tensor
-        2d representation of MNIST digits
-    labels: list
-        the label for each data point in data
-    fname: str
-        filename to save plot in
-
+    :param data: 2d representation of MNIST digits
+    :type data: Tensor
+    :param labels: the label for each data point in data
+    :type labels: list
+    :param frane:filename to save plot in
+    :type frame: str
     """
 
     digit_to_color = [

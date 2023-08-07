@@ -1,3 +1,3 @@
-__all__ = ["bps"]
+__all__ = ["mtcs"]
 
-from .bps import MT_CS_full
+from .mtcs import MT_CS_full
