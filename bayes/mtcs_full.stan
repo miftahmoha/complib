@@ -55,12 +55,12 @@ parameters {
 	real<lower=0> alpha_0;
 }
 
-/*transformed parameters {
+/* transformed parameters {
 	real real_signal[M][n];
 	for (j in 1:M) {
 		real_signal[j] = Theta[j] * transpose(D)
 	}
-}*/
+} */
 
 model {
 	alpha_0 ~ normal(0, 1);

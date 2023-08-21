@@ -10,11 +10,11 @@ import numpy as np
 import importlib
 import os
 import sys
-from copy import deepcopy
+from tqdm import tqdm
 
 
 # adds the parent directory to the sys.path list to import utils module
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/pursuit"
 sys.path.append(parent_dir)
 
 
@@ -32,16 +32,16 @@ def normalize(matrix):
 
 
 # reads the BPS stan model
-with open("./bayes/mtcs.stan", "r") as file:
+with open("./bayes/mtcs_full.stan", "r") as file:
     bps_stan = file.read()
 
 
-def process_results(results, M, n):
+def process_results_mean(results, M, n):
     """
     Processes results from the Bayesian model
 
     :param results: posterior samples from STAN
-    :type results: model class
+    :type results: Model object
     :param M: number of signals
     :type results: int
     :param n: orignal dimension of each signal
@@ -67,6 +67,18 @@ def process_results(results, M, n):
     return theta_dict
 
 
+def vector_to_diagonal_matrix(vector):
+    if vector.ndim != 2 or vector.shape[1] != 1:
+        raise ValueError("Input vector must be of shape (mx1)")
+
+    m = vector.shape[0]
+    diagonal_matrix = np.diag(
+        np.squeeze(vector)
+    )  # Squeezing to remove the second dimension
+
+    return diagonal_matrix
+
+
 class MT_CS_full:
     """
     Performs multitask compressive sensing with full bayesian computation
@@ -86,7 +98,7 @@ class MT_CS_full:
         # X must be a numpy array
         check_numpy_array(X)
 
-        # importing matrix_utils module
+        # imports matrix_utils module
         try:
             imported_module = importlib.import_module("matrix_utils")
             print(f"Successfully imported utils module.")
@@ -96,29 +108,29 @@ class MT_CS_full:
                 f"Module '{dictionary}' not found. Please check the module name and try again."
             )
 
-        # importing the dictionary
+        # imports the dictionary
         try:
             generate_dict = getattr(imported_module, f"{dictionary}_dictionary")
 
         except NameError:
             print(f"{dictionary} not found. Please check the name and try again.")
 
-        # importing the measure matrix
+        # imports the measure matrix
         try:
             generate_measure = getattr(imported_module, f"{measure_matrix}_matrix")
         except NameError:
             print(f"{measure_matrix} not found. Please check the name and try again.")
 
         # normalizes signals
-        Z = normalize(deepcopy(X).T)
+        Z = normalize(X.copy().T)
 
         # M: number of signals, n: original dimension of each signal
         M, n = Z.shape
 
-        # measure dimension
+        # measures dimension
         m = int(n * proportion)
 
-        # measure matrix
+        # measures matrix
         Phi = normalize(generate_measure(m, n))
 
         # measures vectors
@@ -128,5 +140,5 @@ class MT_CS_full:
         signals_data = {"M": M, "n": n, "m": m, "X": Z_measure, "phi": Phi}
         posterior = stan.build(bps_stan, data=signals_data)
         fit_results = posterior.sample(num_chains=4, num_samples=1)
-        results = process_results(fit_results, M, n)
+        results = process_results_mean(fit_results, M, n)
         return results

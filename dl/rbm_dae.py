@@ -3,6 +3,8 @@ Improving Autoencoder Performance with Pretrained RBMs
 
 https://towardsdatascience.com/improving-autoencoder-performance
 -with-pretrained-rbms-e2e13113c782
+
+Eugene Tang
 """
 
 import torch
