@@ -4,50 +4,16 @@ Multitask Compressive Sensing: Shihao Ji, David Dunson†, and Lawrence Carin
 https://www.researchgate.net/publication/224514217_Multitask_Compressive_Sensing
 """
 
-import stan
-import numpy as np
-
-import importlib
-import os
-import sys
-from tqdm import tqdm
-
-
-# adds the parent directory to the sys.path list to import utils module
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..")) + "/pursuit"
-sys.path.append(parent_dir)
-
-
-# checks that input is a numpy array
-def check_numpy_array(input_data):
-    if not isinstance(input_data, np.ndarray):
-        raise TypeError("Input must be a NumPy array.")
-
-
-def vector_to_diagonal_matrix(vector):
-    if vector.ndim != 2 or vector.shape[1] != 1:
-        raise ValueError("Input vector must be of shape (mx1)")
-
-    m = vector.shape[0]
-    diagonal_matrix = np.diag(
-        np.squeeze(vector)
-    )  # Squeezing to remove the second dimension
-
-    return diagonal_matrix
+from .bayes_utils import *
 
 
 # process results
-def process_results(alpha_0, alpha, Phi, Z_measure, i=0):
+def process_results_MAP(alpha_0, alpha, Phi, Z_measure, i=0):
     M, _ = Z_measure.shape
     A = vector_to_diagonal_matrix(alpha)
     Sigma = np.linalg.pinv(alpha_0 * Phi.T @ Phi + A)
     MAP_thetas = {i: alpha_0 * Sigma @ Phi.T @ Z_measure[i, :] for i in range(M)}
     return MAP_thetas
-
-
-# compute relative error
-def compute_relative_error(V1_true, V2_approx):
-    return np.linalg.norm(V1_true - V2_approx) / np.linalg.norm(V1_true)
 
 
 class MT_CS_BCS:
@@ -135,7 +101,7 @@ class MT_CS_BCS:
                     alpha[j] = M / sum_denom
                 k += 1
 
-            MAP_thetas = process_results(alpha_0, alpha, Phi, Z_measure, i=0)
+            MAP_thetas = process_results_MAP(alpha_0, alpha, Phi, Z_measure, i=0)
 
             # Dictionary
             D = generate_dict(n, n)
@@ -192,7 +158,7 @@ class MT_CS_BCS:
                     ) / compute_s_ij(Phi, C_j, j) ** 2
                 alpha[j] = M / sum_denom
 
-            MAP_thetas = process_results(alpha_0, alpha, Phi, Z_measure, i=0)
+            MAP_thetas = process_results_MAP(alpha_0, alpha, Phi, Z_measure, i=0)
 
             # Dictionary
             D = generate_dict(n, n)

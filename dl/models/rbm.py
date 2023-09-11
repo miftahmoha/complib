@@ -12,7 +12,7 @@ Implementation of a Restricted Boltzmann Machine
 """
 
 import torch
-from .utils import *
+from .display_utils import *
 
 
 class RBM:

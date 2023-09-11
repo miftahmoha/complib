@@ -14,7 +14,7 @@ Implementation of a Deep Autoencoder
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .utils import *
+from .display_utils import *
 
 
 class DAE_model(nn.Module):

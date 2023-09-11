@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 # local imports
 from dl.models.dae import Naive_DAE_model
-from dl.models.utils import *
+from dl.models.display_utils import *
 
 
 class DAE:

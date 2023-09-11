@@ -11,7 +11,7 @@ import torch
 
 from .dae import DAE_model, Naive_DAE_model
 from .rbm import RBM
-from .utils import *
+from .display_utils import *
 
 
 def train_rbm(train_dl, visible_dim, hidden_dim, k, num_epochs, lr, use_gaussian=False):

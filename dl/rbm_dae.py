@@ -16,7 +16,7 @@ import numpy as np
 # local imports
 from dl.models.dae import DAE_model
 from dl.models.train_utils import train_rbm
-from dl.models.utils import *
+from dl.models.display_utils import *
 
 
 class RBM_DAE:
